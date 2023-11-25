@@ -26,3 +26,13 @@
     direnv allow .
 ```
 
+
+## Create database
+
+```bash
+    mkdir db
+    touch db/database.sqlite
+    
+    ./scripts/create_database_to.sh
+```
+

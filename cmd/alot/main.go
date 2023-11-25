@@ -11,13 +11,13 @@ import (
 	"sync"
 )
 
-const max = 20
+const MAX = 20
 
 var wg sync.WaitGroup
 
 func main() {
-	wg.Add(max)
-	for id := 0; id < max; id++ {
+	wg.Add(MAX)
+	for id := 0; id < MAX; id++ {
 		go request(id)
 	}
 	wg.Wait()
@@ -41,7 +41,13 @@ func request(id int) {
 		slog.Error(err.Error(), slog.Int("id", id))
 		return
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			slog.Error(err.Error(), slog.Int("id", id))
+			return
+		}
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		b, err := io.ReadAll(resp.Body)
@@ -53,11 +59,11 @@ func request(id int) {
 		return
 	}
 
-	type responseMessate struct {
+	type responseMessage struct {
 		Message string `json:"message"`
 	}
 
-	var response responseMessate
+	var response responseMessage
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		slog.Error(err.Error(), slog.Int("id", id))
 		return

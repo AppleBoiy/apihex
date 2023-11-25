@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-const MAX = 20
+const MAX = 40
 
 var wg sync.WaitGroup
 

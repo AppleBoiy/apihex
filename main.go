@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"log/slog"
@@ -10,6 +11,8 @@ import (
 	"syscall"
 	"time"
 	"todoapi/todo"
+
+	_ "todoapi/tmp"
 )
 
 type handler struct {
@@ -37,7 +40,7 @@ func main() {
 	// Initializing the server in a goroutine so that
 	// it won't block the graceful shutdown handling below
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()

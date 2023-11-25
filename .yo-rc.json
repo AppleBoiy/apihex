@@ -1,0 +1,10 @@
+{
+  "generator-gitignore-io": {
+    "options": [
+      "jetbrains+all",
+      "macos",
+      "visualstudiocode",
+      "goland+all"
+    ]
+  }
+}

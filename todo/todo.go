@@ -8,5 +8,5 @@ type Todo struct {
 	Done      bool      `json:"done"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	DeteledAt time.Time `json:"deteled_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }

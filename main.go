@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"log/slog"
 	"net/http"
 	"os/signal"
 	"syscall"
 	"time"
-	"todoapi/todo"
-
 	_ "todoapi/tmp"
+	"todoapi/todo"
 )
 
 type handler struct {
@@ -25,12 +26,26 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
+	db, err := sql.Open("sqlite3", "./db/database.sqlite")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(db)
+
 	r := gin.Default()
 	h := handler{message: "pong", id: "id"}
 
 	r.GET("/ping", h.ping)
 	r.GET("/transfer/:id", h.transfer)
-	r.GET("/todos", todo.List)
+
+	handler := todo.NewHandle(db)
+	r.GET("/todos", handler.List)
+	r.POST("/todos", handler.NewTask)
 
 	srv := &http.Server{
 		Addr:    ":8080",

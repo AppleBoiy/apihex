@@ -1,0 +1,1 @@
+sqlite3 db/database.sqlite < scripts/create_table_todo.sql
